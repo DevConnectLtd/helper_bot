@@ -1,0 +1,27 @@
+name: Code formatter and linter
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+
+  build:
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
+
+      - name: Run nox sessions
+        run: |
+          python -m pip install --upgrade pip
+          pip install nox
+          nox
