@@ -19,7 +19,7 @@ class LoggingFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-def create_logging_setup(logger: logging.Logger = logging.getLogger("helper_bot")) -> logging.Logger:
+def create_logging_setup(logger: logging.Logger = logging.getLogger()) -> logging.Logger:
     stream = logging.StreamHandler()
     stream.setFormatter(LoggingFormatter())
     logger.addHandler(stream)
