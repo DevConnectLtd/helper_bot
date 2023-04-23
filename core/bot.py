@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import typing
-
 import asyncpg  # type: ignore
 import disnake
 from disnake.ext import commands
@@ -51,6 +49,6 @@ class HelperBot(commands.Bot):
         self._db = DatabaseHandler(self.pool)
         await self.db.setup()
 
-    async def start(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+    async def start(self) -> None:
         await self.setups()
-        await super().start(*args, **kwargs)
+        await super().start(self.envs.BOT_TOKEN)
