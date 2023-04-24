@@ -5,13 +5,14 @@ import pathlib
 import disnake
 from disnake.ext import commands
 
+from core.errors import ErrorHandlerImpl
 from core.logger import create_logging_setup
 from core.utils import BotBase, ColorLike, EnvironmentVariables, load_and_verify_envs, parse_cogs
 
 __all__: tuple[str] = ("HelperBot",)
 
 
-class HelperBot(BotBase):
+class HelperBot(ErrorHandlerImpl, BotBase):
     envs: EnvironmentVariables = load_and_verify_envs()
     logger = create_logging_setup()
 
@@ -21,6 +22,7 @@ class HelperBot(BotBase):
             strip_after_prefix=True,
             case_insensitive=True,
             intents=disnake.Intents(
+                dm_messages=True,
                 guild_messages=True,
                 message_content=True,
                 members=True,

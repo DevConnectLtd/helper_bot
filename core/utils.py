@@ -80,7 +80,7 @@ def parse_cogs(path: str | pathlib.Path) -> dict[str, type[HelperCog]]:
     path_str = path.as_posix().replace("/", ".")[:-3] if isinstance(path, pathlib.Path) else path
     module = importlib.import_module(path_str)
     cogs: list[tuple[str, HelperCog]] = inspect.getmembers(
-        module, lambda item: inspect.isclass(item) and HelperCog in item.mro()
+        module, lambda item: inspect.isclass(item) and HelperCog in item.mro() and item.__name__ != "HelperCog"
     )
     return dict(cogs)
 
