@@ -6,6 +6,7 @@ import disnake
 from disnake.ext import commands
 
 from core.errors import ErrorHandlerImpl
+from core.help import BotHelp
 from core.logger import create_logging_setup
 from core.utils import BotBase, ColorLike, EnvironmentVariables, load_and_verify_envs, parse_cogs
 
@@ -18,9 +19,10 @@ class HelperBot(ErrorHandlerImpl, BotBase):
 
     def __init__(self) -> None:
         super().__init__(
-            command_prefix=commands.when_mentioned_or("!"),
+            command_prefix=commands.when_mentioned_or("d!"),
             strip_after_prefix=True,
             case_insensitive=True,
+            help_command=BotHelp(),
             intents=disnake.Intents(
                 dm_messages=True,
                 guild_messages=True,
@@ -34,6 +36,7 @@ class HelperBot(ErrorHandlerImpl, BotBase):
             allowed_mentions=disnake.AllowedMentions(everyone=False, replied_user=False),
         )
         self.load_extension("jishaku")
+        self.get_cog("Jishaku").hidden = True  # type: ignore
         for file in pathlib.Path("cogs/").glob("*.py"):
             list(map(lambda cog: self.add_cog(cog(self)), parse_cogs(file).values()))
 

@@ -8,6 +8,8 @@ from core.utils import HelperCog
 
 
 class Tags(HelperCog):
+    """Tag commands."""
+
     @commands.group("tag", description="Group handling tags.", aliases=["t"], invoke_without_command=True)
     async def tag(self, ctx: commands.Context[HelperBot], *, query: str | None = None) -> None:
         if query:

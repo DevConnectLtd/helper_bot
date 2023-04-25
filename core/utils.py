@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import importlib
 import inspect
 import logging
@@ -48,6 +49,16 @@ class HelperCog(commands.Cog):
 
     def __init__(self, bot: HelperBot) -> None:
         self.bot = bot
+
+    @classmethod
+    def copy(cls, bot: HelperBot) -> HelperCog:
+        return HelperCog(bot)
+
+    async def cog_load(self) -> None:
+        logging.info(f"Loading {self.qualified_name} @ {datetime.datetime.now()}")
+
+    def cog_unload(self) -> None:
+        logging.info(f"Unloading {self.qualified_name} @ {datetime.datetime.now()}")
 
 
 class BotBase(commands.Bot):
