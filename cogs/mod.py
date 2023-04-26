@@ -9,6 +9,7 @@ from core.bot import HelperBot
 from core.constants import RoleID
 from core.models import WarnData
 from core.utils import HelperCog
+from pages.warn_pag import WarnPaginator
 
 
 class Moderation(HelperCog):
@@ -27,6 +28,7 @@ class Moderation(HelperCog):
         )
 
     @warn.command("case", description="Displays info about a particular warn case by it's ID")
+    @commands.has_role(RoleID.MODERATOR)
     async def case(self, ctx: commands.Context[HelperBot], id: int) -> None:
         data: dict[str, typing.Any] | None = await ctx.bot.pool.fetchrow(  # type: ignore
             "SELECT * FROM devconnect_warns WHERE id = $1", id
@@ -40,7 +42,18 @@ class Moderation(HelperCog):
         await ctx.reply(
             embed=ctx.bot.generic_embed(ctx, warn_data.reason)
             .add_field("Target", warn_data.user_id)
-            .add_field("Moderator", warn_data.mod_id)
-            .add_field("Created on:", disnake.utils.format_dt(warn_data.created_at, "R"), inline=False)
+            .add_field("Target", f"{ctx.bot.get_user(warn_data.user_id)} ({warn_data.user_id})", inline=False)
+            .add_field("Moderator", f"{ctx.bot.get_user(warn_data.mod_id)} ({warn_data.mod_id})", inline=False)
             .set_author(name=f"Warn #{id}")
         )
+
+    @warn.command("info", description="check warn info related to a user")
+    @commands.has_role(RoleID.MODERATOR)
+    async def info(self, ctx: commands.Context[HelperBot], *, user: disnake.Member | None) -> None:
+        user_id = (user.id if user else None) or ctx.author.id
+        warns = await ctx.bot.pool.fetch("SELECT * FROM devconnect_warns WHERE user_id = $1", user_id)  # type: ignore
+        if not warns:
+            await ctx.reply(embed=ctx.bot.generic_embed(ctx, "User has no warnings"))
+            return
+        pag = WarnPaginator(ctx, map(lambda d: WarnData(**d), warns))  # type: ignore
+        pag.message = await ctx.reply(embed=pag.prepare_embed(), view=pag)
