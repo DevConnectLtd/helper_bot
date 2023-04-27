@@ -49,7 +49,7 @@ class Moderation(HelperCog):
 
     @warn.command("info", description="check warn info related to a user")
     @commands.has_role(RoleID.MODERATOR)
-    async def info(self, ctx: commands.Context[HelperBot], *, user: disnake.Member | None) -> None:
+    async def info(self, ctx: commands.Context[HelperBot], *, user: disnake.User | None) -> None:
         user_id = (user.id if user else None) or ctx.author.id
         warns = await ctx.bot.pool.fetch("SELECT * FROM devconnect_warns WHERE user_id = $1", user_id)  # type: ignore
         if not warns:

@@ -11,4 +11,4 @@ class Meta(HelperCog):
 
     @commands.command("ping", description="bot's latency")
     async def ping(self, ctx: commands.Context[HelperBot]) -> None:
-        await ctx.reply(embed=self.bot.generic_embed(ctx, f"🏓 Ponag! `{ctx.bot.latency*1000:.2f}ms`"))
+        await ctx.reply(embed=self.bot.generic_embed(ctx, f"🏓 Pong! `{ctx.bot.latency*1000:.2f}ms`"))
