@@ -42,7 +42,11 @@ class HelperBot(ErrorHandlerImpl, BotBase):
 
     @staticmethod
     def generic_embed(
-        ctx: commands.Context[HelperBot], description: str, *, title: str | None = None, color: ColorLike = disnake.Color.blurple()
+        ctx: commands.Context[HelperBot],
+        description: str,
+        *,
+        title: str | None = None,
+        color: ColorLike = disnake.Color.blurple(),
     ) -> disnake.Embed:
         return disnake.Embed(title=title, description=description, color=color).set_footer(
             text=f"Requested by {ctx.author.name}", icon_url=ctx.author.display_avatar

@@ -12,7 +12,7 @@ if typing.TYPE_CHECKING:
 class ErrorHandlerImpl:
     async def on_command_error(self, ctx: commands.Context[HelperBot], exception: Exception) -> None:
         if not isinstance(exception, commands.CommandOnCooldown):
-            ctx.command.reset_cooldown(ctx) # type: ignore
+            ctx.command.reset_cooldown(ctx)  # type: ignore
         if isinstance(exception, commands.CommandNotFound):
             return
         elif isinstance(exception, (commands.MemberNotFound, commands.UserNotFound)):
