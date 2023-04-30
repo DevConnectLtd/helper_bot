@@ -134,7 +134,7 @@ class ChoiceButtons(disnake.ui.View):
                 view = TicketCloseButtons(self.thread,interaction.author)
                 
             )
-            await self.thread.edit(name=f"O-{str(interaction.author)")
+            await self.thread.edit(name=f"O-{str(interaction.author)}")
             self.activity = True
     async def on_timeout(self):
        if not self.activity:
@@ -223,6 +223,6 @@ class TicketCloseButtons(disnake.ui.View):
                 ).set_footer(text=f"Closed by {interaction.author}",icon_url=interaction.author.avatar.url),
                 )
             await self.thread.remove_user(self.author)
-            await self.thread.edit(name=f"Closed-{str(interaction.author}")
+            await self.thread.edit(name=f"Closed-{str(interaction.author)}")
     async def on_timeout(self):
         await self.thread.delete()
