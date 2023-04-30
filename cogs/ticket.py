@@ -8,14 +8,12 @@ MODERATOR_ROLE_ID = RoleID.MODERATOR
 TICKET_CHANNEL_ID = ChannelID.TICKET_CHANNEL_ID
 class ticket(TicketCog):
     """tickets"""
-    def __init__(self , bot: commands.Bot):
-        self.bot = bot
 
     # Update ticket name when user changes name
     @commands.Cog.listener()
     async def on_member_update(self , before : disnake.Member , after : disnake.Member):
-        username_before : str = before.name+before.discriminator
-        username_after : str = after.name+after.discriminator
+        username_before : str = str(before)
+        username_after : str = str(after)
         if username_before != username_after:
             ticket_channel : disnake.TextChannel = self.bot.get_channel(TICKET_CHANNEL_ID) or await self.bot.fetch_channel(TICKET_CHANNEL_ID)
             thread : disnake.Thread = [threads for threads in ticket_channel.threads if threads.name.split("-")[1] == username_before][0]
@@ -56,10 +54,10 @@ class TicketButton(disnake.ui.View):
        interaction: disnake.Interaction
        ) -> None:
       
-      if interaction.author.name+interaction.author.discriminator not in [name.name.split('-')[1] for name in interaction.channel.threads]:
+      if str(interaction.author) not in [name.name.split('-')[1] for name in interaction.channel.threads]:
 
         thread = await interaction.channel.create_thread(
-           name = interaction.author.name+interaction.author.discriminator,
+           name = str(interaction.author),
            type = disnake.ChannelType.private_thread
            )
         
@@ -136,7 +134,7 @@ class ChoiceButtons(disnake.ui.View):
                 view = TicketCloseButtons(self.thread,interaction.author)
                 
             )
-            await self.thread.edit(name=f"O-{interaction.author.name+interaction.author.discriminator}")
+            await self.thread.edit(name=f"O-{str(interaction.author)")
             self.activity = True
     async def on_timeout(self):
        if not self.activity:
@@ -225,11 +223,6 @@ class TicketCloseButtons(disnake.ui.View):
                 ).set_footer(text=f"Closed by {interaction.author}",icon_url=interaction.author.avatar.url),
                 )
             await self.thread.remove_user(self.author)
-            await self.thread.edit(name=f"Closed-{self.author.name+self.author.discriminator}")
+            await self.thread.edit(name=f"Closed-{str(interaction.author}")
     async def on_timeout(self):
         await self.thread.delete()
-
-
-
-def setup(bot: commands.Bot):
-    bot.add_cog(ticket(bot))
