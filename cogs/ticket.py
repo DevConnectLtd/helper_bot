@@ -2,11 +2,11 @@
 import disnake
 from disnake.ext import commands
 from datetime import datetime
-from core.utils import TicketCog
+from core.utils import HelperCog
 from core.constants import RoleID , ChannelID
 MODERATOR_ROLE_ID = RoleID.MODERATOR
 TICKET_CHANNEL_ID = ChannelID.TICKET_CHANNEL_ID
-class ticket(TicketCog):
+class ticket(HelperCog):
     """tickets"""
 
     # Update ticket name when user changes name
