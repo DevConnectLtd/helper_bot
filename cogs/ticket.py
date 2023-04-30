@@ -29,6 +29,7 @@ class ticket(HelperCog):
              )
     #Gen ticket system
     @commands.command()
+    @commands.has_role(RoleID.MODERATOR)
     async def setupticket(self, ctx:commands.Context , channel : disnake.TextChannel):
 
         await ctx.reply(f"Created ticket system in {channel.mention}")
