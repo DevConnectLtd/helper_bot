@@ -39,8 +39,8 @@ class DatabaseHandler:
         await self.pool.execute(  # type: ignore
             """
             CREATE TABLE IF NOT EXISTS devconnect_reps (
-            user_id BIGINT,
-            reps INTEGER DEFAULT 0
+                user_id BIGINT,
+                reps INTEGER DEFAULT 0
             )
             """
         )
@@ -77,58 +77,35 @@ class DatabaseHandler:
 
     async def add_rep(self, user_id: int, reps: int = 1) -> int:
         check_existence: int | None = await self.pool.fetchval(  # type: ignore
-            """
-            SELECT reps FROM devconnect_reps 
-            WHERE user_id = $1
-            """,
-            user_id,
+            "SELECT reps FROM devconnect_reps WHERE user_id = $1", user_id
         )
         if check_existence is None:
             await self.pool.execute(  # type: ignore
-                """ 
-            INSERT INTO devconnect_reps
-            VALUES ($1, $2)
-                """,
+                "INSERT INTO devconnect_reps VALUES ($1, $2)",
                 user_id,
                 reps,
             )
             return reps
         await self.pool.execute(  # type: ignore
-            """
-            UPDATE devconnect_reps SET reps = reps + $1
-            WHERE user_id = $2
-            """,
+            "UPDATE devconnect_reps SET reps = reps + $1 WHERE user_id = $2",
             reps,
             user_id,
         )
-        return check_existence + reps  # type: ignore
+        assert isinstance(check_existence, int)
+        return check_existence + reps
 
     async def remove_rep(self, user_id: int, reps: int) -> int:
         current_reps: int | None = await self.pool.fetchval(  # type: ignore
-            """
-            SELECT reps FROM devconnect_reps 
-            WHERE user_id = $1
-            """,
+            "SELECT reps FROM devconnect_reps WHERE user_id = $1",
             user_id,
         )
-        if not current_reps:
-            return 0
-        if current_reps < reps:
-            await self.pool.execute(  # type: ignore
-                """
-                UPDATE devconnect_reps SET reps = $1 
-                WHERE user_id = $2
-                """,
-                0,
-                user_id,
-            )
-            return 0
+        if current_reps is None:
+            await self.add_rep(user_id, 0)
+        assert isinstance(current_reps, int)
+        new_reps = (current_reps - reps) if (current_reps - reps) >= 0 else 0
         await self.pool.execute(  # type: ignore
-            """
-            UPDATE devconnect_reps SET reps = reps - $1 
-            WHERE user_id = $2
-            """,
-            reps,
+            "UPDATE devconnect_reps SET reps = $1 WHERE user_id = $2",
+            new_reps,
             user_id,
         )
-        return current_reps - reps
+        return new_reps

@@ -20,6 +20,8 @@ class BotHelp(commands.HelpCommand):
         for command in cog.get_commands():  # type: ignore
             command: commands.Command | commands.Group  # type: ignore
             if isinstance(command, commands.Group):
+                if command.invoke_without_command is True:
+                    command_data.append(command.name)
                 command_data.extend(map(lambda a: a.qualified_name, command.commands))  # type: ignore
             else:
                 command_data.append(command.name)

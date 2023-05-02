@@ -38,7 +38,7 @@ class Moderation(HelperCog):
                 embed=ctx.bot.generic_embed(ctx, f"No warn case with ID {id} exists.", color=disnake.Color.red())
             )
             return
-        warn_data = WarnData(**data)
+        warn_data = WarnData(**data) # type: ignore
         await ctx.reply(
             embed=ctx.bot.generic_embed(ctx, warn_data.reason)
             .add_field("Target", warn_data.user_id)
