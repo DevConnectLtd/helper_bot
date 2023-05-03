@@ -18,20 +18,20 @@ class Moderation(HelperCog):
     @commands.command("ban")
     @commands.has_role(RoleID.MODERATOR)
     async def ban(
-        self, ctx: commands.Context[HelperBot], member: disnake.Member, clean_history_duration: int = 0, *, reason: str = "No reason provided"
+        self,
+        ctx: commands.Context[HelperBot],
+        member: disnake.Member,
+        clean_history_duration: int = 0,
+        *,
+        reason: str = "No reason provided",
     ) -> None:
-        await member.ban(
-            clean_history_duration=clean_history_duration, reason=reason
-        )
+        await member.ban(clean_history_duration=clean_history_duration, reason=reason)
         await ctx.reply(f"`{member}` banned successfully with the reason {reason}")
         log_embed = disnake.Embed(
             title=f"{ctx.author} banned {member}",
-            description=(
-                f"{member} ({member.id}) was banned by "
-                f"{ctx.author} with the reason __{reason}__."
-            ),
+            description=(f"{member} ({member.id}) was banned by " f"{ctx.author} with the reason __{reason}__."),
             color=disnake.Color.red(),
-            timestamp=disnake.utils.utcnow()
+            timestamp=disnake.utils.utcnow(),
         ).set_thumbnail(url=member.display_avatar)
         await self._log_action(log_embed)
 
@@ -44,15 +44,12 @@ class Moderation(HelperCog):
         await ctx.reply(f"`{member}` was kicked successfully with the reason {reason}")
         log_embed = disnake.Embed(
             title=f"{ctx.author} kicked {member}",
-            description=(
-                f"{member} ({member.id}) was kicked by "
-                f"{ctx.author} with the reason __{reason}__."
-            ),
+            description=(f"{member} ({member.id}) was kicked by " f"{ctx.author} with the reason __{reason}__."),
             color=disnake.Color.yellow(),
-            timestamp=disnake.utils.utcnow()
+            timestamp=disnake.utils.utcnow(),
         ).set_thumbnail(url=member.display_avatar)
         await self._log_action(log_embed)
-    
+
     @commands.command("unban")
     @commands.has_role(RoleID.MODERATOR)
     async def unban(self, ctx: commands.GuildContext, member_id: int, *, reason: str = "No reason provided") -> None:
@@ -61,12 +58,9 @@ class Moderation(HelperCog):
             await ctx.reply(f"`{member_id}` was unbanned successfully with the reason {reason}")
             log_embed = disnake.Embed(
                 title=f"{ctx.author} unbanned {member_id}",
-                description=(
-                    f"{member_id} was unbanned by "
-                    f"{ctx.author} with the reason __{reason}__."
-                ),
+                description=(f"{member_id} was unbanned by " f"{ctx.author} with the reason __{reason}__."),
                 color=disnake.Color.green(),
-                timestamp=disnake.utils.utcnow()
+                timestamp=disnake.utils.utcnow(),
             )
             await self._log_action(log_embed)
         except disnake.HTTPException:
@@ -94,12 +88,9 @@ class Moderation(HelperCog):
 
         log_embed = disnake.Embed(
             title=f"{ctx.author} warned {member}",
-            description=(
-                f"{member} ({member.id}) was warned by "
-                f"{ctx.author} with the reason __{reason}__."
-            ),
+            description=(f"{member} ({member.id}) was warned by " f"{ctx.author} with the reason __{reason}__."),
             color=disnake.Color.teal(),
-            timestamp=disnake.utils.utcnow()
+            timestamp=disnake.utils.utcnow(),
         ).set_thumbnail(url=member.display_avatar)
         await self._log_action(log_embed)
 
@@ -114,7 +105,7 @@ class Moderation(HelperCog):
                 embed=ctx.bot.generic_embed(ctx, f"No warn case with ID {id} exists.", color=disnake.Color.red())
             )
             return
-        warn_data = WarnData(**data) # type: ignore
+        warn_data = WarnData(**data)  # type: ignore
         await ctx.reply(
             embed=ctx.bot.generic_embed(ctx, warn_data.reason)
             .add_field("Target", warn_data.user_id)
