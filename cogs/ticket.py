@@ -12,8 +12,9 @@ from core.utils import HelperCog
 MODERATOR_ROLE_ID = RoleID.MODERATOR
 TICKET_CHANNEL_ID = ChannelID.TICKET_CHANNEL_ID
 
-class TicketSys():
+class TicketSys:
     "Utils for ticket system"
+    @staticmethod
     async def open_ticket(interaction:disnake.Interaction,reason : list):
             await interaction.response.edit_message(
                 f"{interaction.author.mention},<@&{MODERATOR_ROLE_ID}>",
@@ -27,7 +28,7 @@ class TicketSys():
             await interaction.channel.edit(name=f"{[reason[0]]}-{str(interaction.author)}")
             await interaction.author.send(embed=disnake.Embed(description=f"Ticket opened in {interaction.guild.name}\n Channel : {interaction.channel.mention}",color=disnake.Color.green()))
 
-class ticket(HelperCog):
+class Ticket(HelperCog):
     """tickets"""
     hidden = True
     # Update ticket name when user changes name
@@ -106,7 +107,7 @@ class TicketButton(disnake.ui.View):
 
 
 class ChoiceButtons(disnake.ui.View):
-    def __init__(self, thread, author) -> None:
+    def __init__(self, thread: disnake.Thread, author: disnake.Member) -> None:
         super().__init__(timeout=120)
         self.author: disnake.Member = author
         self.thread: disnake.Thread = thread
