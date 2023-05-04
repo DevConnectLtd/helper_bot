@@ -15,9 +15,10 @@ TICKET_CHANNEL_ID = ChannelID.TICKET_CHANNEL_ID
 
 class ticket(HelperCog):
     """tickets"""
+
     hidden = True
     # Update ticket name when user changes name
-    
+
     @commands.Cog.listener()
     async def on_member_update(self, before: disnake.Member, after: disnake.Member):
         username_before: str = str(before)
