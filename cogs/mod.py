@@ -70,9 +70,8 @@ class Moderation(HelperCog):
             )
 
     async def _log_action(self, embed: disnake.Embed) -> None:
-        channel = await self.bot.fetch_channel(ChannelID.MODERATION_LOG_CHANNEL_ID)
-        channel = typing.cast(disnake.TextChannel, channel)
-        await channel.send(embed=embed)
+        channel = self.bot.get_partial_messageable(ChannelID.MODERATION_LOG_CHANNEL_ID)
+        await channel.send(embed=embed) # type: ignore
 
     @commands.group("warn", description="warn actions", invoke_without_command=True)
     @commands.has_role(RoleID.MODERATOR)
