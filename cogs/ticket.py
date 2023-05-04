@@ -12,8 +12,23 @@ from core.utils import HelperCog
 MODERATOR_ROLE_ID = RoleID.MODERATOR
 TICKET_CHANNEL_ID = ChannelID.TICKET_CHANNEL_ID
 
+class TicketSys:
+    "Utils for ticket system"
+    @staticmethod
+    async def open_ticket(interaction:disnake.Interaction,reason : list):
+            await interaction.response.edit_message(
+                f"{interaction.author.mention},<@&{MODERATOR_ROLE_ID}>",
+                embed=disnake.Embed(
+                    title="Ticket opened", description=reason[1], color=disnake.Color.green(), timestamp=datetime.now()
+                )
+                .set_thumbnail(interaction.author.avatar.url)
+                .set_author(name=interaction.author),
+                view=TicketCloseButtons(interaction.channel, interaction.author),
+            )
+            await interaction.channel.edit(name=f"{[reason[0]]}-{str(interaction.author)}")
+            await interaction.author.send(embed=disnake.Embed(description=f"Ticket opened in {interaction.guild.name}\n Channel : {interaction.channel.mention}",color=disnake.Color.green()))
 
-class ticket(HelperCog):
+class Ticket(HelperCog):
     """tickets"""
 
     hidden = True
@@ -79,7 +94,7 @@ class TicketButton(disnake.ui.View):
             await thread.send(
                 interaction.author.mention,
                 embed=disnake.Embed(
-                    description="Why are u creating a ticket? \n Kindly select any option below.",
+                    description="Why are u creating a ticket? \n Kindly select an option below.",
                     color=disnake.Color.yellow(),
                 ),
                 view=ChoiceButtons(thread, interaction.author),
@@ -93,7 +108,7 @@ class TicketButton(disnake.ui.View):
 
 
 class ChoiceButtons(disnake.ui.View):
-    def __init__(self, thread, author) -> None:
+    def __init__(self, thread: disnake.Thread, author: disnake.Member) -> None:
         super().__init__(timeout=120)
         self.author: disnake.Member = author
         self.thread: disnake.Thread = thread
@@ -114,16 +129,8 @@ class ChoiceButtons(disnake.ui.View):
     @disnake.ui.button(label="Order", style=disnake.ButtonStyle.blurple)
     async def order_button(self, button: disnake.ui.Button, interaction: disnake.Interaction) -> None:
         if self.author == interaction.author:
-            await interaction.response.edit_message(
-                f"{interaction.author.mention},<@&{MODERATOR_ROLE_ID}>",
-                embed=disnake.Embed(
-                    title="Ticket opened", description="Order", color=disnake.Color.green(), timestamp=datetime.now()
-                )
-                .set_thumbnail(interaction.author.avatar.url)
-                .set_author(name=interaction.author),
-                view=TicketCloseButtons(self.thread, interaction.author),
-            )
-            await self.thread.edit(name=f"O-{str(interaction.author)}")
+            self.clear_items()
+            TicketSys.open_ticket(interaction,['O','Order'])
             self.activity = True
 
     async def on_timeout(self):
@@ -138,43 +145,19 @@ class ReportButtons(disnake.ui.View):
         self.thread: disnake.Thread = thread
         self.activity: bool = False
 
-    async def edit_thread(self, content):
-        await self.thread.edit(name=content + self.thread.name)
-        self.activity = True
-
     @disnake.ui.button(label="User", style=disnake.ButtonStyle.blurple)
     async def report_button(self, button: disnake.ui.Button, interaction: disnake.Interaction) -> None:
         if self.author == interaction.author:
-            await interaction.response.edit_message(
-                f"{interaction.author.mention},<@&{MODERATOR_ROLE_ID}>",
-                embed=disnake.Embed(
-                    title="Ticket opened",
-                    description="User Report",
-                    color=disnake.Color.green(),
-                    timestamp=datetime.now(),
-                )
-                .set_thumbnail(interaction.author.avatar.url)
-                .set_author(name=interaction.author),
-                view=TicketCloseButtons(self.thread, interaction.author),
-            )
-            await self.edit_thread("UR-")
+            self.clear_items()
+            TicketSys.open_ticket(interaction,['UR','User Report'])
+            self.activity = True
 
     @disnake.ui.button(label="Issue", style=disnake.ButtonStyle.blurple)
     async def order_button(self, button: disnake.ui.Button, interaction: disnake.Interaction) -> None:
         if self.author == interaction.author:
-            await interaction.response.edit_message(
-                f"{interaction.author.mention},<@&{MODERATOR_ROLE_ID}>",
-                embed=disnake.Embed(
-                    title="Ticket opened",
-                    description="Issue Report",
-                    color=disnake.Color.green(),
-                    timestamp=datetime.now(),
-                )
-                .set_thumbnail(interaction.author.avatar.url)
-                .set_author(name=interaction.author),
-                view=TicketCloseButtons(self.thread, interaction.author),
-            )
-            await self.edit_thread("IR-")
+            self.clear_items()
+            TicketSys.open_ticket(interaction,['IR','Issue Report'])
+            self.activity = True
 
     async def on_timeout(self):
         if not self.activity:
@@ -198,6 +181,13 @@ class TicketCloseButtons(disnake.ui.View):
         )
         await self.thread.remove_user(self.author)
         await self.thread.edit(name=f"Closed-{str(interaction.author)}")
+        await self.author.send(
+            embed=disnake.Embed(
+                title="Ticket Closed",
+                description=f"Your ticket has been closed by {interaction.author.mention}",
+                color=disnake.Color.red()
+            )
+        )
 
     async def on_timeout(self):
         await self.thread.delete()
