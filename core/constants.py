@@ -9,4 +9,4 @@ class ChannelID:
 
 
 class General:
-    SERVICES = ['Website building',"Bot development","something1","something2","something3"]
+    SERVICES = ['Website building',"Bot development","Automation"]
